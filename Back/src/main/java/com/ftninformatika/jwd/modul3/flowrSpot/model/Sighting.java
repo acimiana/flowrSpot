@@ -10,13 +10,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "sightings")
+@Table(name = "sighting")
 public class Sighting {
 	
 	@Id
@@ -33,10 +32,10 @@ public class Sighting {
 	private String description;
 	
 	@Column
-	private Number latitude;
+	private Double latitude;
 	
 	@Column
-	private Number longitude;
+	private Double longitude;
 
 	@OneToMany(mappedBy = "sighting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
@@ -44,15 +43,15 @@ public class Sighting {
 	@OneToMany(mappedBy = "sighting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 	
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "sightings")
-	private List<User> users = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User user;
 	
 	public Sighting() {
 		super();
 	}
 
-	public Sighting(Long id, Flower flower, String name, String description, Number latitude, Number longitude,
-			List<Like> likes, List<User> users, List<Comment> comments) {
+	public Sighting(Long id, Flower flower, String name, String description, Double latitude, Double longitude,
+			List<Like> likes, User user, List<Comment> comments) {
 		super();
 		this.id = id;
 		this.flower = flower;
@@ -61,7 +60,7 @@ public class Sighting {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.likes = likes;
-		this.users = users;
+		this.user = user;
 		this.comments = comments;
 	}
 
@@ -73,12 +72,12 @@ public class Sighting {
 		this.comments = comments;
 	}
 
-	public List<User> getUsers() {
-		return users;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsers(List<User> users) {
-		this.users = users;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Long getId() {
@@ -113,19 +112,19 @@ public class Sighting {
 		this.description = description;
 	}
 
-	public Number getLatitude() {
+	public Double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(Number latitude) {
+	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
 	}
 
-	public Number getLongitude() {
+	public Double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(Number longitude) {
+	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
 

@@ -114,9 +114,12 @@ public class FlowerController {
 	}
     
     @GetMapping("/{id}/sightings")
-    public ResponseEntity<List<SightingDTO>> getAllByFlower(Long flowerId){
+    public ResponseEntity<List<SightingDTO>> getAllByFlower(@PathVariable Long id){
 
-        List<Sighting> sightings = sightingService.findAllSightingsByFlower(flowerId);
+    	System.out.println("FlowerId");
+    	System.out.println(id);
+    	
+        List<Sighting> sightings = sightingService.findAllSightingsByFlower(id);
         List<SightingDTO> sightingsDTO = toSightingDTO.convert(sightings);
 
         return new ResponseEntity<>(sightingsDTO, HttpStatus.OK);

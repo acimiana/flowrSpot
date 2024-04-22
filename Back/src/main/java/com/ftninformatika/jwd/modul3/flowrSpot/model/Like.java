@@ -7,8 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "likes")
 public class Like {
 	
 	@Id
@@ -21,6 +23,7 @@ public class Like {
 	@ManyToOne(fetch = FetchType.LAZY)
     private Sighting sighting;
 	
+//	TODO: obrisati kasnije
 	@Column
 	private String userFullName;
 

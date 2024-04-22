@@ -14,18 +14,18 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>kostur-test</groupId>
-	<artifactId>kostur-test</artifactId>
+	<groupId>FlowrSpot</groupId>
+	<artifactId>FlowrSpot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<!-- lookup parent from repository -->
 	<!-- jar je predefinisana vrednost, ako se želi postavit war vrednost onda 
-		je neophodno i osigurati da konfiguracija za embedovani servlet kontejner 
+		je neophodno i osigurati da konfiguracija za e"pom.xml"mbedovani servlet kontejner 
 		ne utiče na konfiguraciju servlet kontejnerom u kojem bi se postavila war 
 		arhiva. Potrebno je označiti embedovani servlet kontejner kao provided (vidi 
 		dole) -->
 	<packaging>jar</packaging>
 
-	<name>Kostur</name>
+	<name>FlowrSpot</name>
 	<url>http://www.example.com</url>
 
 	<properties>
@@ -38,6 +38,7 @@
 	<dependencies>
 		<!-- Add typical dependencies for a web application -->
 		<!-- uključivanje Spring Web modula -->
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -65,12 +66,9 @@
 		<!-- Add dependencies for testing -->
 		<!-- pribavljanje test okruženja, artifact će ujedno prevući i JUnit biblioteku -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-test</artifactId>
+	    </dependency>
 
 		<!-- Add spring-boot-devtools -->
 		<!-- modul je poželjno koristiti tokom samog razvoja veb aplikacija jer
@@ -103,7 +101,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.49</version>
+			<version>5.1.49</version><!--$NO-MVN-MAN-VER$-->
 			<!-- <scope>runtime</scope> -->
 		</dependency>
 
@@ -117,18 +115,63 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.4</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+	        <groupId>org.junit.jupiter</groupId>
+	        <artifactId>junit-jupiter-api</artifactId>
+	        <version>5.5.2</version><!--$NO-MVN-MAN-VER$--> <!-- Use the latest version compatible with Spring Boot 2.2.5 -->
+	        <scope>test</scope>
+	    </dependency>
+	    
+	    <dependency>
+	        <groupId>org.junit.jupiter</groupId>
+	        <artifactId>junit-jupiter-engine</artifactId>
+	        <version>5.5.2</version><!--$NO-MVN-MAN-VER$--> <!-- Use the same version as junit-jupiter-api -->
+	        <scope>test</scope>
+	    </dependency>
+	
+	    <dependency>
+	        <groupId>org.junit.vintage</groupId>
+	        <artifactId>junit-vintage-engine</artifactId>
+	        <version>5.5.2</version><!--$NO-MVN-MAN-VER$--> <!-- Use the same version as JUnit Jupiter -->
+	        <scope>test</scope>
+	    </dependency>
+	    
+	    <dependency>
+			<groupId>org.apiguardian</groupId>
+			<artifactId>apiguardian-api</artifactId>
+			<version>1.1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.opentest4j</groupId>
+			<artifactId>opentest4j</artifactId>
+			<version>1.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+			
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-commons</artifactId>
+			<version>1.5.2</version><!--$NO-MVN-MAN-VER$-->
+			<scope>compile</scope>
+		</dependency>
+	    
 	</dependencies>
 	<build>
-		<finalName>Kostur-test</finalName>
+		<finalName>FlowrSpot</finalName><!--$NO-MVN-MAN-VER$-->
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -138,6 +181,10 @@
 <!--					<excludeDevtools>false</excludeDevtools>-->
 <!--				</configuration>-->
 			</plugin>
+			<plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
 		</plugins>
 	</build>
 </project>

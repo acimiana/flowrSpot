@@ -18,6 +18,7 @@ public class Comment {
 	@Column
 	private String content;
 	
+//	TODO: obrisati kasnije
 	@Column
 	private String userFullName;
 	

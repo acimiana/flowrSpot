@@ -60,17 +60,17 @@ public class JpaSightingService implements SightingService {
 	
 	@Override
 	public List<Sighting> findAllSightingsByFlower(Long id) {
-		return sightingRepository.findAllByFlower(id);
+		return sightingRepository.findAllByFlowerId(id);
 	}
 
 	@Override
-	public List<Sighting> findAllSightingsByUsers(Long id) {
-		return sightingRepository.findAllByUsers(id);
+	public List<Sighting> findAllSightingsByUser(Long id) {
+		return sightingRepository.findAllByUserId(id);
 	}
 
 	@Override
 	public List<Like> findAllLikesBySighting(Long id) {
-		return likeRepository.findAllBySighting(id);
+		return likeRepository.findAllBySightingId(id);
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class JpaSightingService implements SightingService {
 
 	@Override
 	public List<Comment> findAllCommentsBySighting(Long id) {
-		return commentRepository.findAllBySighting(id);
+		return commentRepository.findAllBySightingId(id);
 	}
 
 	@Override

@@ -89,4 +89,14 @@ public class JpaUserService implements UserService {
 		return userRepository.findFirstByUsername(username);
 	}
 
+	@Override
+	public boolean validateUser(String username) {
+		return username != null && !username.trim().isEmpty();
+	}
+
+	@Override
+	public int add(int a, int b) {
+            return a + b;
+	}
+
 }

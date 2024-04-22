@@ -121,10 +121,13 @@ public class SightingController {
 	    }
 	}
 	
-	@GetMapping("/{sighting_id}/likes")
-    public ResponseEntity<List<LikeDTO>> getAllLikes(@PathVariable Long likeId){
+	@GetMapping("/{id}/likes")
+    public ResponseEntity<List<LikeDTO>> getAllLikes(@PathVariable Long id){
+		
+		System.out.println("ISPISUJEM");
+		System.out.println(id);
 
-        List<Like> likes = sightingService.findAllLikesBySighting(likeId);
+        List<Like> likes = sightingService.findAllLikesBySighting(id);
         List<LikeDTO> likesDTO = toLikeDTO.convert(likes);
 
         return new ResponseEntity<>(likesDTO, HttpStatus.OK);
@@ -153,9 +156,9 @@ public class SightingController {
 	}
 	
 	@GetMapping("/{sighting_id}/comments")
-    public ResponseEntity<List<CommentDTO>> getAllComments(@PathVariable Long commentId){
+    public ResponseEntity<List<CommentDTO>> getAllComments(@PathVariable Long sighting_id){
 
-        List<Comment> comments = sightingService.findAllCommentsBySighting(commentId);
+        List<Comment> comments = sightingService.findAllCommentsBySighting(sighting_id);
         List<CommentDTO> commentsDTO = toCommentDTO.convert(comments);
 
         return new ResponseEntity<>(commentsDTO, HttpStatus.OK);

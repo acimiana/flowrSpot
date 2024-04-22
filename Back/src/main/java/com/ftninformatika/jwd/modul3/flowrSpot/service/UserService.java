@@ -24,6 +24,10 @@ public interface UserService {
 	
 	void delete(Long id);
 
-    Optional<User> findbyUsername(String userName);
+    Optional<User> findbyUsername(String username);
+    
+    boolean validateUser(String username);
+    
+    int add(int a, int b);
 
 }

@@ -30,7 +30,8 @@ public class Flower {
 	
 	@Column
 	private String profilePicture;
-	
+
+//	TODO: obrisati kasnije
 	@Column
 	private boolean favorite;
 	

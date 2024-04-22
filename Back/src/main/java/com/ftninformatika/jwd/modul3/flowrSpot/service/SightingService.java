@@ -20,7 +20,7 @@ public interface SightingService {
 	
 	List<Sighting> findAllSightingsByFlower(Long id);
 
-	List<Sighting> findAllSightingsByUsers(Long id);
+	List<Sighting> findAllSightingsByUser(Long id);
 	
 	List<Like> findAllLikesBySighting(Long id);
 	
