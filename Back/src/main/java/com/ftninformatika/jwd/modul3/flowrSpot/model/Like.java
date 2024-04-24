@@ -1,14 +1,15 @@
 package com.ftninformatika.jwd.modul3.flowrSpot.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "likes")
 public class Like {
 	
 	@Id
@@ -20,9 +21,6 @@ public class Like {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     private Sighting sighting;
-	
-	@Column
-	private String userFullName;
 
 	public Like() {
 		super();
@@ -33,7 +31,6 @@ public class Like {
 		this.id = id;
 		this.user = user;
 		this.sighting = sighting;
-		this.userFullName = userFullName;
 	}
 
 	public Long getId() {
@@ -58,14 +55,6 @@ public class Like {
 
 	public void setSighting(Sighting sighting) {
 		this.sighting = sighting;
-	}
-
-	public String getUserFullName() {
-		return userFullName;
-	}
-
-	public void setUserFullName(String userFullName) {
-		this.userFullName = userFullName;
 	}
 
 }

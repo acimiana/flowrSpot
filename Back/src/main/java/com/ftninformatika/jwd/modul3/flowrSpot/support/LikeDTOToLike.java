@@ -25,13 +25,7 @@ public class LikeDTOToLike implements Converter<LikeDTO, Like> {
 		
 		Like like = new Like();
 		like.setId(likeDTO.getId());
-		like.setUserFullName(likeDTO.getUserFullName());
-		
-		if (likeDTO.getUserDTO() != null) {
-			User user = userService.findOneById(likeDTO.getUserDTO().getId());
-			like.setUser(user);
-		}
-		
+
 		if (likeDTO.getSightingDTO() != null) {
 			Sighting sighting = sightingService.findOneById(likeDTO.getSightingDTO().getId());
 			like.setSighting(sighting);

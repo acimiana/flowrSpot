@@ -1,6 +1,7 @@
 package com.ftninformatika.jwd.modul3.flowrSpot.web.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -24,8 +25,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +38,7 @@ import com.ftninformatika.jwd.modul3.flowrSpot.service.UserService;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.SightingToSightingDTO;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.UserDTOToUser;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.UserToUserDTO;
-import com.ftninformatika.jwd.modul3.flowrSpot.web.dto.AuthKorisnikDTO;
+import com.ftninformatika.jwd.modul3.flowrSpot.web.dto.AuthUserDTO;
 import com.ftninformatika.jwd.modul3.flowrSpot.web.dto.SightingDTO;
 import com.ftninformatika.jwd.modul3.flowrSpot.web.dto.UserDTO;
 import com.ftninformatika.jwd.modul3.flowrSpot.web.dto.UserPasswordChangeDTO;
@@ -74,42 +75,11 @@ public class UserController {
 	@Autowired
 	private SightingToSightingDTO toSightingDTO;
 	
-	@GetMapping("/{id}/sightings")
-	public ResponseEntity<List<SightingDTO>> getAllSightingsByUser(@PathVariable Long id){
-		
-		 List<Sighting> sightings = sightingService.findAllSightingsByUsers(id);
-		 
-	     List<SightingDTO> sightingsDTO = toSightingDTO.convert(sightings);
-
-	     return new ResponseEntity<>(sightingsDTO, HttpStatus.OK);
-		
-	    }
-	
-	@PostMapping
-    public ResponseEntity<UserDTO> create(@RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
-
-        if(userRegistrationDTO.getId() != null || !userRegistrationDTO.getPassword().equals(userRegistrationDTO.getRepeatedPassword())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        User user = toUser.convert(userRegistrationDTO);
-
-        String encodedPassword = passwordEncoder.encode(userRegistrationDTO.getPassword());
-        user.setPassword(encodedPassword);
-
-        return new ResponseEntity<>(toUserDTO.convert(userService.save(user)), HttpStatus.CREATED);
-    }
-	
-	@PutMapping(value= "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO){
-
-        if(!id.equals(userDTO.getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        User user = toUser.convert(userDTO);
-
-        return new ResponseEntity<>(toUserDTO.convert(userService.save(user)),HttpStatus.OK);
+	@GetMapping
+    public ResponseEntity<List<UserDTO>> get(@RequestParam(defaultValue="0") int page){
+        Page<User> users = userService.findAll(page);
+        return new ResponseEntity<>(toUserDTO.convert(users.getContent()), HttpStatus.OK);
+     
     }
 	
 	@GetMapping("/{id}")
@@ -124,46 +94,118 @@ public class UserController {
         }
     }
 	
-	@GetMapping
-    public ResponseEntity<List<UserDTO>> get(@RequestParam(defaultValue="0") int page){
-        Page<User> users = userService.findAll(page);
-        return new ResponseEntity<>(toUserDTO.convert(users.getContent()), HttpStatus.OK);
+	@GetMapping("/me")
+    public Optional<User> getUserProfile(@RequestHeader (name="Authorization") String token) {
+		
+    	String username = tokenUtils.getUsernameFromToken(token);
+    	
+        return userService.findbyUsername(username);
+
     }
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.PUT, params = "promenaLozinke")
+	@PutMapping(value= "/me",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> update(@RequestHeader (name="Authorization") String token, @Valid @RequestBody UserDTO userDTO){
+		
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		if(!username.equals(userDTO.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    	
+		Optional<User> userToChange = userService.findbyUsername(username);
+		
+		if(!userToChange.isPresent()) { return new ResponseEntity<>(HttpStatus.BAD_REQUEST); }
+		
+		if(!userToChange.get().getId().equals(userDTO.getId())) { return new ResponseEntity<>(HttpStatus.BAD_REQUEST); }
+    	
+        User user = toUser.convert(userDTO);
+
+        return new ResponseEntity<>(toUserDTO.convert(userService.updateUser(user)),HttpStatus.OK);
+        
+    }
+	
+	@GetMapping("/{id}/sightings")
+	public ResponseEntity<List<SightingDTO>> getAllSightingsByUser(@PathVariable Long id){
+		
+		 List<Sighting> sightings = sightingService.findAllSightingsByUserId(id);
+		 
+	     List<SightingDTO> sightingsDTO = toSightingDTO.convert(sightings);
+
+	     return new ResponseEntity<>(sightingsDTO, HttpStatus.OK);
+		
+	}
+	
+	@PostMapping("/register")
+    public ResponseEntity<UserDTO> create(@RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
+
+        if(userRegistrationDTO.getId() != null || !userRegistrationDTO.getPassword().equals(userRegistrationDTO.getRepeatedPassword())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        User user = toUser.convert(userRegistrationDTO);
+
+        String encodedPassword = passwordEncoder.encode(userRegistrationDTO.getPassword());
+        user.setPassword(encodedPassword);
+
+        return new ResponseEntity<>(toUserDTO.convert(userService.save(user)), HttpStatus.CREATED);
+        
+    }
+	
+//    @PreAuthorize("permitAll()")
+	@PostMapping(path = "/login")
+    public ResponseEntity authenticateUser(@RequestBody AuthUserDTO authUserDTO) {
+		System.out.println("DTO");
+		System.out.println(authUserDTO);
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(authUserDTO.getUsername(), authUserDTO.getPassword());
+        System.out.println("authenticationToken");
+        System.out.println(authenticationToken);
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        System.out.println("authentication");
+        System.out.println(authentication);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authUserDTO.getUsername());
+            return ResponseEntity.ok(tokenUtils.generateToken(userDetails));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+        
+    }
+	
+	@PutMapping(value= "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO){
+
+        if(!id.equals(userDTO.getId())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        User user = toUser.convert(userDTO);
+
+        return new ResponseEntity<>(toUserDTO.convert(userService.save(user)),HttpStatus.OK);
+    }
+	
+	@PutMapping(value="/{id}", params = "passwordChange")
     public ResponseEntity<Void> changePassword(@PathVariable Long id, @RequestBody UserPasswordChangeDTO userPasswordChangeDTO){
        
         if(!userPasswordChangeDTO.getPassword().equals(userPasswordChangeDTO.getRepeatedPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        boolean rezultat;
+        boolean result;
         try {
-            rezultat = userService.changePassword(id, userPasswordChangeDTO);
+        	result = userService.changePassword(id, userPasswordChangeDTO);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if(rezultat) {
+        if(result) {
             return new ResponseEntity<>(HttpStatus.OK);
         }else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-    }
-	
-	@PostMapping(path = "/auth")
-    public ResponseEntity authenticateUser(@RequestBody AuthKorisnikDTO authKorisnikDTO) {
-
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(authKorisnikDTO.getUsername(), authKorisnikDTO.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(authKorisnikDTO.getUsername());
-            return ResponseEntity.ok(tokenUtils.generateToken(userDetails));
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-	
+            
+        }        
+    }	
 }

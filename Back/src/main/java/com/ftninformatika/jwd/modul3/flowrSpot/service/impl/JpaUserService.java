@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ftninformatika.jwd.modul3.flowrSpot.enumeration.UserRole;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.User;
 import com.ftninformatika.jwd.modul3.flowrSpot.repository.UserRepository;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.UserService;
@@ -37,6 +38,7 @@ public class JpaUserService implements UserService {
 
 	@Override
 	public User save(User user) {
+        user.setUserRole(UserRole.USER);
 		return userRepository.save(user);
 	}
 
@@ -87,6 +89,36 @@ public class JpaUserService implements UserService {
 	@Override
 	public Optional<User> findbyUsername(String username) {
 		return userRepository.findFirstByUsername(username);
+	}
+
+	@Override
+	public boolean validateUser(String username) {
+		return username != null && !username.trim().isEmpty();
+	}
+
+	@Override
+	public int add(int a, int b) {
+            return a + b;
+	}
+
+	@Override
+	public User findByFirstNameAndLastNameAndUsernameAndUserRole(String firstName, String lastName, String username,
+			UserRole userRole) {
+		return userRepository.findByFirstNameAndLastNameAndUsernameAndUserRole(firstName, lastName, username, userRole);
+	}
+
+	@Override
+	public User updateUser(User user) {
+		
+		User currentUser = userRepository.findOneById(user.getId());
+		
+		user.setPassword(currentUser.getPassword());
+		user.setUserRole(currentUser.getUserRole());
+		
+		userRepository.save(user);
+		
+		return user;
+		
 	}
 
 }

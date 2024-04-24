@@ -15,5 +15,9 @@ public interface FlowerService {
 	Flower edit(Flower flower);
 	
 	boolean delete(Long id);
+
+	List<Flower> findAllFavoriteFlowersByUserId(Long myId);
+	
+	Flower findByNameAndLatinName(String name, String latinName);
 				
 }

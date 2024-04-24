@@ -31,9 +31,6 @@ public class Flower {
 	@Column
 	private String profilePicture;
 	
-	@Column
-	private boolean favorite;
-	
 	@OneToMany(mappedBy = "flower", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Sighting> sightings = new ArrayList<>();
 	
@@ -45,14 +42,13 @@ public class Flower {
 	}
 
 	public Flower(Long id, String name, String latinName, Integer sightingsNo, String profilePicture,
-			boolean favorite, List<Sighting> sightings, List<Favorite> favorites) {
+			List<Sighting> sightings, List<Favorite> favorites) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.latinName = latinName;
 		this.sightingsNo = sightingsNo;
 		this.profilePicture = profilePicture;
-		this.favorite = favorite;
 		this.sightings = sightings;
 		this.favorites = favorites;
 	}
@@ -95,14 +91,6 @@ public class Flower {
 
 	public void setProfilePicture(String profilePicture) {
 		this.profilePicture = profilePicture;
-	}
-
-	public boolean isFavorite() {
-		return favorite;
-	}
-
-	public void setFavorite(boolean favorite) {
-		this.favorite = favorite;
 	}
 
 	public List<Sighting> getSightings() {

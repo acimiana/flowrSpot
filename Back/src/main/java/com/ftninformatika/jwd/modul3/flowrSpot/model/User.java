@@ -6,18 +6,17 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
+
+import com.ftninformatika.jwd.modul3.flowrSpot.enumeration.UserRole;
 
 @Entity
-@Table(name = "users")
 public class User {
 	
 	@Id
@@ -36,16 +35,16 @@ public class User {
 	@Column(unique = true, nullable = false)
 	private String username;
 	
+	@Enumerated(EnumType.STRING)
+    private UserRole userRole;
+	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Favorite> favorites = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinTable(name = "users_sightings", 
-			   joinColumns = @JoinColumn(name = "user_id"), 
-			   inverseJoinColumns = @JoinColumn(name = "sighting_id"))
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Sighting> sightings = new ArrayList<>();
 
 	public User() {
@@ -54,7 +53,7 @@ public class User {
 
 	public User(Long id, String firstName, String lastName, 
 			List<Favorite> favorites, List<Like> likes, List<Sighting> sightings,
-			String password, String username) {
+			String password, String username, UserRole userRole) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -64,6 +63,7 @@ public class User {
 		this.sightings = sightings;
 		this.password = password;
 		this.username = username;
+		this.userRole = userRole;
 	}
 
 	public List<Sighting> getSightings() {
@@ -130,4 +130,12 @@ public class User {
 		this.username = username;
 	}
 
+	public UserRole getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(UserRole userRole) {
+		this.userRole = userRole;
+	}
+	
 }

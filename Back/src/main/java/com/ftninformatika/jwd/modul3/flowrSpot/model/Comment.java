@@ -18,9 +18,6 @@ public class Comment {
 	@Column
 	private String content;
 	
-	@Column
-	private String userFullName;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
     private Sighting sighting;
 	
@@ -31,11 +28,10 @@ public class Comment {
 		super();
 	}
 
-	public Comment(Long id, String content, String userFullName, Sighting sighting, User user) {
+	public Comment(Long id, String content, Sighting sighting, User user) {
 		super();
 		this.id = id;
 		this.content = content;
-		this.userFullName = userFullName;
 		this.sighting = sighting;
 		this.user = user;
 	}
@@ -54,14 +50,6 @@ public class Comment {
 
 	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public String getUserFullName() {
-		return userFullName;
-	}
-
-	public void setUserFullName(String userFullName) {
-		this.userFullName = userFullName;
 	}
 
 	public Sighting getSighting() {

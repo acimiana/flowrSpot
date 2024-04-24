@@ -28,7 +28,6 @@ public class CommentToCommentDTO implements Converter<Comment, CommentDTO> {
 
 		CommentDTO commentDTO = new CommentDTO();
 		commentDTO.setId(comment.getId());
-		commentDTO.setUserFullName(comment.getUserFullName());
 		commentDTO.setContent(comment.getContent());
 		
 		User user = comment.getUser();
@@ -53,7 +52,5 @@ public class CommentToCommentDTO implements Converter<Comment, CommentDTO> {
 
         return commentsDTO;
     }
-
-	
 
 }

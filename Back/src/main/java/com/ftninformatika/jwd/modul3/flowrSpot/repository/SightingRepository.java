@@ -16,8 +16,8 @@ public interface SightingRepository extends JpaRepository<Sighting, Long> {
 		
 	void deleteById(Long id);
 	
-	List<Sighting> findAllByFlower(Long id);
+	List<Sighting> findAllByFlowerId(Long id);
 
-	List<Sighting> findAllByUsers(Long id);
+	List<Sighting> findAllByUserId(Long id);
 	
 }

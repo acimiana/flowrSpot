@@ -14,38 +14,32 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.ftninformatika.jwd.modul3.flowrSpot.model.Korisnik;
-import com.ftninformatika.jwd.modul3.flowrSpot.service.KorisnikService;
+import com.ftninformatika.jwd.modul3.flowrSpot.model.User;
+import com.ftninformatika.jwd.modul3.flowrSpot.service.UserService;
 
 @Service
 @Primary
 public class UserDetailsServiceImpl implements UserDetailsService {
 
   @Autowired
-  private KorisnikService korisnikService;
+  private UserService userService;
 
-  /* Zelimo da predstavimo korisnika preko UserDetails klase - nacina
-  *  na koji Spring boot predstavlja korisnika. Ucitamo na osnovu korisnickog imena
-  *  korisnika iz nase mysql baze i u okviru UserDetails namapiramo njegove podatke
-  *  - kredencijale i rolu kroz GrantedAuthorities. */
   @Override
   @Transactional
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Korisnik korisnik = korisnikService.findbyKorisnickoIme(username).orElse(null);
+    User user = userService.findbyUsername(username).orElse(null);
 
-    if (korisnik == null) {
+    if (user == null) {
       throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
     } else {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-        // korisnik moze imati vise od jedne uloge te za svaku ulogu mogu biti definisana prava
-        String role = "ROLE_" + korisnik.getUloga().toString();
-        //String role = korisnik.getUloga().toString();
+        String role = "ROLE_" + user.getUserRole().toString();
         grantedAuthorities.add(new SimpleGrantedAuthority(role));
 
         return new org.springframework.security.core.userdetails.User(
-                korisnik.getKorisnickoIme().trim(),
-                korisnik.getLozinka().trim(),
+        		user.getUsername().trim(),
+        		user.getPassword().trim(),
                 grantedAuthorities);
     }
   }
