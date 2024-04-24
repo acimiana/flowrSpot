@@ -27,6 +27,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 	@Autowired
 	public void configureAuthentication(
@@ -35,11 +40,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		authenticationManagerBuilder
 				.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 
 	@Bean

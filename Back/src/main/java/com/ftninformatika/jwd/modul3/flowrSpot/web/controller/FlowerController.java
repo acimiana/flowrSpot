@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Flower;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Sighting;
+import com.ftninformatika.jwd.modul3.flowrSpot.security.TokenUtils;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.FlowerService;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.SightingService;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.FlowerDTOToFlower;
@@ -69,7 +70,7 @@ public class FlowerController {
 	    FlowerDTO flowerDTO = toFlowerDTO.convert(flower);
 	        
 	    return new ResponseEntity<>(flowerDTO, HttpStatus.OK);
-    } 
+    }
 	
     @PreAuthorize("permitAll()")
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -115,14 +116,22 @@ public class FlowerController {
     
     @GetMapping("/{id}/sightings")
     public ResponseEntity<List<SightingDTO>> getAllByFlower(@PathVariable Long id){
-
-    	System.out.println("FlowerId");
-    	System.out.println(id);
     	
-        List<Sighting> sightings = sightingService.findAllSightingsByFlower(id);
+        List<Sighting> sightings = sightingService.findAllSightingsByFlowerId(id);
         List<SightingDTO> sightingsDTO = toSightingDTO.convert(sightings);
 
         return new ResponseEntity<>(sightingsDTO, HttpStatus.OK);
+    }
+    
+    @GetMapping("/favorites")
+    public ResponseEntity<List<FlowerDTO>> findAllFavoriteFlowersByUserId(@PathVariable String token, String secretKey){
+    	
+    	Long myId = TokenUtils.getUserIdFromJwt(token, secretKey);
+    	
+        List<Flower> flowers = flowerService.findAllFavoriteFlowersByUserId(myId);
+		List<FlowerDTO> flowersDTO = toFlowerDTO.convert(flowers);
+
+        return new ResponseEntity<>(flowersDTO, HttpStatus.OK);
     }
     
 }

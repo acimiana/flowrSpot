@@ -11,22 +11,18 @@ public class FlowerDTO {
 	private Integer sightingsNo;
 	
 	private String profilePicture;
-	
-	private boolean favorite;
 
 	public FlowerDTO() {
 		super();
 	}
 
-	public FlowerDTO(Long id, String name, String latinName, Integer sightingsNo, String profilePicture,
-			boolean favorite) {
+	public FlowerDTO(Long id, String name, String latinName, Integer sightingsNo, String profilePicture) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.latinName = latinName;
 		this.sightingsNo = sightingsNo;
 		this.profilePicture = profilePicture;
-		this.favorite = favorite;
 	}
 
 	public Long getId() {
@@ -67,14 +63,6 @@ public class FlowerDTO {
 
 	public void setProfilePicture(String profilePicture) {
 		this.profilePicture = profilePicture;
-	}
-
-	public boolean isFavorite() {
-		return favorite;
-	}
-
-	public void setFavorite(boolean favorite) {
-		this.favorite = favorite;
 	}
 
 }

@@ -10,7 +10,7 @@ public class AuthUserDTO {
     @NotBlank
     private String password;
 
-//    public AuthUserDto() {}
+    public AuthUserDTO() {}
 
     public String getUsername() { return username; }
 

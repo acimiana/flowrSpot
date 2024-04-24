@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Comment;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Like;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Sighting;
+import com.ftninformatika.jwd.modul3.flowrSpot.repository.UserRepository;
+import com.ftninformatika.jwd.modul3.flowrSpot.security.TokenUtils;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.SightingService;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.CommentDTOToComment;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.CommentToCommentDTO;
@@ -56,6 +59,9 @@ public class SightingController {
 	@Autowired
 	private CommentDTOToComment toComment;
 	
+	@Autowired
+	private TokenUtils tokenUtils;
+		
 	@GetMapping
     public ResponseEntity<List<SightingDTO>> getAll(){
 
@@ -127,7 +133,7 @@ public class SightingController {
 		System.out.println("ISPISUJEM");
 		System.out.println(id);
 
-        List<Like> likes = sightingService.findAllLikesBySighting(id);
+        List<Like> likes = sightingService.findAllLikesBySightingId(id);
         List<LikeDTO> likesDTO = toLikeDTO.convert(likes);
 
         return new ResponseEntity<>(likesDTO, HttpStatus.OK);
@@ -158,14 +164,20 @@ public class SightingController {
 	@GetMapping("/{sighting_id}/comments")
     public ResponseEntity<List<CommentDTO>> getAllComments(@PathVariable Long sighting_id){
 
-        List<Comment> comments = sightingService.findAllCommentsBySighting(sighting_id);
+        List<Comment> comments = sightingService.findAllCommentsBySightingId(sighting_id);
         List<CommentDTO> commentsDTO = toCommentDTO.convert(comments);
 
         return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
     }
 	
 	@PostMapping(value = "/{sighting_id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommentDTO> create(@Valid @RequestBody CommentDTO commentDTO){
+    public ResponseEntity<CommentDTO> create(@Valid @RequestBody CommentDTO commentDTO, @RequestHeader (name="Authorization") String token){
+		
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		if(!username.equals(commentDTO.getUserDTO().getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 		
 		Comment comment = toComment.convert(commentDTO);
 		Comment savedComment= sightingService.saveComment(comment);
@@ -184,6 +196,5 @@ public class SightingController {
 	     } else {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    }
-	}
-	
+	}	
 }

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 
+import com.ftninformatika.jwd.modul3.flowrSpot.enumeration.UserRole;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.User;
 import com.ftninformatika.jwd.modul3.flowrSpot.web.dto.UserPasswordChangeDTO;
 
@@ -29,5 +30,9 @@ public interface UserService {
     boolean validateUser(String username);
     
     int add(int a, int b);
+    
+	User findByFirstNameAndLastNameAndUsernameAndUserRole(String firstName, String lastName, String username, UserRole userRole);
+	
+	User updateUser(User user);
 
 }

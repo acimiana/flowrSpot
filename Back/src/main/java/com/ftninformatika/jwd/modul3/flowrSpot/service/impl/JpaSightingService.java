@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Comment;
+import com.ftninformatika.jwd.modul3.flowrSpot.model.Favorite;
+import com.ftninformatika.jwd.modul3.flowrSpot.model.Flower;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Like;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Sighting;
 import com.ftninformatika.jwd.modul3.flowrSpot.repository.CommentRepository;
+import com.ftninformatika.jwd.modul3.flowrSpot.repository.FavoriteRepository;
+import com.ftninformatika.jwd.modul3.flowrSpot.repository.FlowerRepository;
 import com.ftninformatika.jwd.modul3.flowrSpot.repository.LikeRepository;
 import com.ftninformatika.jwd.modul3.flowrSpot.repository.SightingRepository;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.SightingService;
@@ -25,6 +29,12 @@ public class JpaSightingService implements SightingService {
 	@Autowired
 	private CommentRepository commentRepository;
 	
+	@Autowired
+	private FavoriteRepository favoriteRepository;
+	
+	@Autowired
+	private FlowerRepository flowerRepository;
+	
 	@Override
 	public List<Sighting> getAll() {
 		return sightingRepository.findAll();
@@ -37,6 +47,12 @@ public class JpaSightingService implements SightingService {
 
 	@Override
 	public Sighting save(Sighting sighting) {
+//		currentFlower = flowerRepository.findOneById(sighting.getFlower().getId());
+		Flower currentFlower = sighting.getFlower();
+		currentFlower.setSightingsNo(currentFlower.getSightingsNo() + 1);
+		flowerRepository.save(currentFlower);
+//		NE MORA, CUVA SAMO FLOWER_ID
+//		sighting.setFlower(currentFlower);
 		return sightingRepository.save(sighting);
 	}
 	
@@ -59,18 +75,23 @@ public class JpaSightingService implements SightingService {
 	}
 	
 	@Override
-	public List<Sighting> findAllSightingsByFlower(Long id) {
+	public List<Sighting> findAllSightingsByFlowerId(Long id) {
 		return sightingRepository.findAllByFlowerId(id);
 	}
 
 	@Override
-	public List<Sighting> findAllSightingsByUser(Long id) {
+	public List<Sighting> findAllSightingsByUserId(Long id) {
 		return sightingRepository.findAllByUserId(id);
 	}
 
 	@Override
-	public List<Like> findAllLikesBySighting(Long id) {
+	public List<Like> findAllLikesBySightingId(Long id) {
 		return likeRepository.findAllBySightingId(id);
+	}
+
+	@Override
+	public Like findOneLikeById(Long id) {
+		return likeRepository.findOneById(id);
 	}
 
 	@Override
@@ -92,7 +113,7 @@ public class JpaSightingService implements SightingService {
 	}
 
 	@Override
-	public List<Comment> findAllCommentsBySighting(Long id) {
+	public List<Comment> findAllCommentsBySightingId(Long id) {
 		return commentRepository.findAllBySightingId(id);
 	}
 
@@ -113,8 +134,19 @@ public class JpaSightingService implements SightingService {
 		return true;
 	}
 
-	
+	@Override
+	public Comment findOneCommentById(Long id) {
+		return commentRepository.findOneById(id);
+	}
 
-	
+	@Override
+	public List<Favorite> getAllFavorites() {
+		return favoriteRepository.findAll();
+	}
+
+	@Override
+	public Favorite findOneFavoriteById(Long id) {
+		return favoriteRepository.findOneById(id);
+	}
 
 }

@@ -135,5 +135,12 @@ public class Sighting {
 	public void setLikes(List<Like> likes) {
 		this.likes = likes;
 	}
+
+	@Override
+	public String toString() {
+		return "Sighting [id=" + id + ", flower=" + flower + ", name=" + name + ", description=" + description
+				+ ", latitude=" + latitude + ", longitude=" + longitude + ", likes=" + likes + ", comments=" + comments
+				+ ", user=" + user + "]";
+	}
 	
 }

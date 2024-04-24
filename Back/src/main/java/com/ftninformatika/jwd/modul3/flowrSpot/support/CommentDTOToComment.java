@@ -25,7 +25,6 @@ public class CommentDTOToComment implements Converter<CommentDTO, Comment> {
 		
 		Comment comment = new Comment();
 		comment.setId(commentDTO.getId());
-		comment.setUserFullName(commentDTO.getUserFullName());
 		comment.setContent(commentDTO.getContent());
 		
 		

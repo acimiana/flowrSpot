@@ -48,4 +48,14 @@ public class JpaFlowerService implements FlowerService {
 		return true;
 	}
 
+	@Override
+	public List<Flower> findAllFavoriteFlowersByUserId(Long myId) {
+		return flowerRepository.findAllFavoriteFlowersByUserId(myId);
+	}
+
+	@Override
+	public Flower findByNameAndLatinName(String name, String latinName) {
+		return flowerRepository.findByNameAndLatinName(name, latinName);
+	}
+
 }

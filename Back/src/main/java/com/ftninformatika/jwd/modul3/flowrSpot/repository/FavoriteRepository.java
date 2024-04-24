@@ -14,5 +14,4 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 	
 	Favorite findOneById(Long id);
 	
-
 }

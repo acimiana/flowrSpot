@@ -19,7 +19,6 @@ public class UserDTOToUser implements Converter<UserDTO, User> {
 		user.setUsername(userDTO.getUsername());
 		
 		return user;
-	
 	}
 	
 }

@@ -6,11 +6,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import com.ftninformatika.jwd.modul3.flowrSpot.enumeration.UserRole;
 
 @Entity
 public class User {
@@ -31,6 +35,9 @@ public class User {
 	@Column(unique = true, nullable = false)
 	private String username;
 	
+	@Enumerated(EnumType.STRING)
+    private UserRole userRole;
+	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Favorite> favorites = new ArrayList<>();
 	
@@ -46,7 +53,7 @@ public class User {
 
 	public User(Long id, String firstName, String lastName, 
 			List<Favorite> favorites, List<Like> likes, List<Sighting> sightings,
-			String password, String username) {
+			String password, String username, UserRole userRole) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -56,6 +63,7 @@ public class User {
 		this.sightings = sightings;
 		this.password = password;
 		this.username = username;
+		this.userRole = userRole;
 	}
 
 	public List<Sighting> getSightings() {
@@ -122,4 +130,12 @@ public class User {
 		this.username = username;
 	}
 
+	public UserRole getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(UserRole userRole) {
+		this.userRole = userRole;
+	}
+	
 }

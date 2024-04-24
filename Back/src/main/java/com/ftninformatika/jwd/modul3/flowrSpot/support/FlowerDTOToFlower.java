@@ -18,7 +18,6 @@ public class FlowerDTOToFlower implements Converter<FlowerDTO, Flower> {
 		flower.setLatinName(flowerDTO.getLatinName());
 		flower.setSightingsNo(flowerDTO.getSightingsNo());
 		flower.setProfilePicture(flowerDTO.getProfilePicture());
-		flower.setFavorite(flowerDTO.isFavorite());
 		
 		return flower;
 	}

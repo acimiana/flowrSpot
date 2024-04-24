@@ -73,4 +73,14 @@ public class TokenUtils {
 				.setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
 				.signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
+	
+	public static Long getUserIdFromJwt(String token, String secretKey) {
+        Claims claims = Jwts.parser()
+                            .setSigningKey(secretKey)
+                            .parseClaimsJws(token)
+                            .getBody();
+
+        return Long.parseLong((String) claims.get("userId"));
+    }
+	
 }

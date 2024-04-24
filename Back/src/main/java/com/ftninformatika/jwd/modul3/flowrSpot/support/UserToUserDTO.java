@@ -19,6 +19,7 @@ public class UserToUserDTO implements Converter<User, UserDTO> {
 			userDTO.setId(user.getId());
 			userDTO.setFirstName(user.getFirstName());
 			userDTO.setLastName(user.getLastName());
+			userDTO.setUsername(user.getUsername());
 			
 			return userDTO;
 		}
@@ -34,6 +35,5 @@ public class UserToUserDTO implements Converter<User, UserDTO> {
 
         return usersDTO;
     }
-		
-
+	
 }

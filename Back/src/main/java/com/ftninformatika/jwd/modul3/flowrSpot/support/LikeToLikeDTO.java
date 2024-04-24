@@ -28,7 +28,6 @@ public class LikeToLikeDTO implements Converter<Like, LikeDTO> {
 		
 		LikeDTO likeDTO = new LikeDTO();
 		likeDTO.setId(like.getId());
-		likeDTO.setUserFullName(like.getUserFullName());
 		
 		User user = like.getUser();
 		UserDTO userDTO = toUserDTO.convert(user);
@@ -36,7 +35,6 @@ public class LikeToLikeDTO implements Converter<Like, LikeDTO> {
 		Sighting sighting = like.getSighting();
 		SightingDTO sightingDTO = toSightingDTO.convert(sighting);
 		
-		likeDTO.setUserDTO(userDTO);
 		likeDTO.setSightingDTO(sightingDTO);
 		
 		return likeDTO;
