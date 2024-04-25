@@ -97,17 +97,23 @@ public class UserController {
         }
     }
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/me")
-    public Optional<User> getUserProfile(@RequestHeader (name="Authorization") String token) {
+    public ResponseEntity<UserDTO> getUserProfile(@RequestHeader (name="Authorization") String token) {
 		
     	String username = tokenUtils.getUsernameFromToken(token);
     	
-        return userService.findbyUsername(username);
+		Optional<User> u = userService.findbyUsername(username);
+		
+		if(!u.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    	
+        return new ResponseEntity<>(toUserDTO.convert(u.get()), HttpStatus.OK);
 
     }
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PutMapping(value= "/me",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> update(@RequestHeader (name="Authorization") String token, @Valid @RequestBody UserDTO userDTO){
 		
@@ -144,9 +150,9 @@ public class UserController {
 		
 	}
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("permitAll()")
 	@PostMapping("/register")
-    public ResponseEntity<UserDTO> create(@RequestHeader (name="Authorization") String token, @RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
+    public ResponseEntity<UserDTO> create(@RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
 
         if(userRegistrationDTO.getId() != null || !userRegistrationDTO.getPassword().equals(userRegistrationDTO.getRepeatedPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
