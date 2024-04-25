@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Flower;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Sighting;
+import com.ftninformatika.jwd.modul3.flowrSpot.model.User;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.FlowerService;
+import com.ftninformatika.jwd.modul3.flowrSpot.service.UserService;
 import com.ftninformatika.jwd.modul3.flowrSpot.web.dto.SightingDTO;
 
 @Component
@@ -14,6 +16,9 @@ public class SightingDTOToSighting implements Converter<SightingDTO, Sighting> {
 	
 	@Autowired
 	private FlowerService flowerService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public Sighting convert(SightingDTO sightingDTO) {
@@ -28,6 +33,11 @@ public class SightingDTOToSighting implements Converter<SightingDTO, Sighting> {
 		if (sightingDTO.getFlowerDTO() != null) {
 			Flower flower = flowerService.findOneById(sightingDTO.getFlowerDTO().getId());
 			sighting.setFlower(flower);
+		}
+		
+		if (sightingDTO.getUserDTO() != null) {
+			User user = userService.findOneById(sightingDTO.getUserDTO().getId());
+			sighting.setUser(user);
 		}
 		
 		return sighting;

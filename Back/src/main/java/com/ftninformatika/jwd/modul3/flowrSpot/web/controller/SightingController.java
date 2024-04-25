@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Comment;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Like;
 import com.ftninformatika.jwd.modul3.flowrSpot.model.Sighting;
-import com.ftninformatika.jwd.modul3.flowrSpot.repository.UserRepository;
 import com.ftninformatika.jwd.modul3.flowrSpot.security.TokenUtils;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.SightingService;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.CommentDTOToComment;
@@ -61,7 +61,8 @@ public class SightingController {
 	
 	@Autowired
 	private TokenUtils tokenUtils;
-		
+	
+	@PreAuthorize("permitAll()")
 	@GetMapping
     public ResponseEntity<List<SightingDTO>> getAll(){
 
@@ -71,6 +72,7 @@ public class SightingController {
         return new ResponseEntity<>(sightingsDTO, HttpStatus.OK);
     }
 	
+	@PreAuthorize("permitAll()")
 	@GetMapping("/{id}")
 	public ResponseEntity<SightingDTO> get(@PathVariable Long id){
 		
@@ -85,8 +87,18 @@ public class SightingController {
 	    return new ResponseEntity<>(sightingDTO, HttpStatus.OK);
 	    }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SightingDTO> create(@Valid @RequestBody SightingDTO sightingDTO){
+    public ResponseEntity<SightingDTO> create(@RequestHeader (name="Authorization") String token, @Valid @RequestBody SightingDTO sightingDTO){
+		
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		System.out.println("USERNAME");
+		System.out.println(username);
+		
+		if(!username.equals(sightingDTO.getUserDTO().getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 		
 		Sighting sighting = toSighting.convert(sightingDTO);
 		Sighting savedSighting= sightingService.save(sighting);
@@ -96,9 +108,16 @@ public class SightingController {
         return new ResponseEntity<>(savedSightingDTO, HttpStatus.CREATED);
     }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PutMapping(value = "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SightingDTO> update(@PathVariable Long id, @Valid @RequestBody SightingDTO sightingDTO){
+    public ResponseEntity<SightingDTO> update(@RequestHeader (name="Authorization") String token, @PathVariable Long id, @Valid @RequestBody SightingDTO sightingDTO){
 
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		if(!username.equals(sightingDTO.getUserDTO().getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+				
         if(!id.equals(sightingDTO.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -116,9 +135,19 @@ public class SightingController {
         return new ResponseEntity<>(sightingUpdated, HttpStatus.OK);
     }
 	
-	 @DeleteMapping("/{id}")
-	 public ResponseEntity<Void> delete(@PathVariable Long id){
-	     boolean obrisan = sightingService.delete(id);
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> delete(@RequestHeader (name="Authorization") String token, @PathVariable Long id){
+	     
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		Sighting sighting = sightingService.findOneById(id);
+		
+		if(!username.equals(sighting.getUser().getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+		
+		boolean obrisan = sightingService.delete(id);
 
 	     if(obrisan == true) {
 	         return new ResponseEntity<>(HttpStatus.OK);
@@ -127,6 +156,7 @@ public class SightingController {
 	    }
 	}
 	
+	@PreAuthorize("permitAll()")
 	@GetMapping("/{id}/likes")
     public ResponseEntity<List<LikeDTO>> getAllLikes(@PathVariable Long id){
 		
@@ -139,8 +169,15 @@ public class SightingController {
         return new ResponseEntity<>(likesDTO, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PostMapping(value = "/{sighting_id}/likes", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LikeDTO> create(@Valid @RequestBody LikeDTO likeDTO){
+    public ResponseEntity<LikeDTO> create(@RequestHeader (name="Authorization") String token, @Valid @RequestBody LikeDTO likeDTO){
+		
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		if(!username.equals(likeDTO.getUserDTO().getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 		
 		Like like = toLike.convert(likeDTO);
 		Like savedLike= sightingService.saveLike(like);
@@ -150,8 +187,18 @@ public class SightingController {
         return new ResponseEntity<>(savedLikeDTO, HttpStatus.CREATED);
     }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@DeleteMapping("/{sighting_id}/likes")
-	 public ResponseEntity<Void> deleteLike(@PathVariable Long likeId){
+	 public ResponseEntity<Void> deleteLike(@RequestHeader (name="Authorization") String token, @PathVariable Long likeId){
+		
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		Comment comment = sightingService.findOneCommentById(likeId);
+		
+		if(!username.equals(comment.getUser().getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+		
 	     boolean deleted = sightingService.deleteLike(likeId);
 
 	     if(deleted == true) {
@@ -161,6 +208,7 @@ public class SightingController {
 	    }
 	}
 	
+	@PreAuthorize("permitAll()")
 	@GetMapping("/{sighting_id}/comments")
     public ResponseEntity<List<CommentDTO>> getAllComments(@PathVariable Long sighting_id){
 
@@ -170,8 +218,9 @@ public class SightingController {
         return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PostMapping(value = "/{sighting_id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommentDTO> create(@Valid @RequestBody CommentDTO commentDTO, @RequestHeader (name="Authorization") String token){
+    public ResponseEntity<CommentDTO> create(@RequestHeader (name="Authorization") String token, @Valid @RequestBody CommentDTO commentDTO){
 		
 		String username = tokenUtils.getUsernameFromToken(token);
 		
@@ -187,8 +236,18 @@ public class SightingController {
         return new ResponseEntity<>(savedCommentDTO, HttpStatus.CREATED);
     }
 	
-	@DeleteMapping("/{sighting_id}/comments")
-	 public ResponseEntity<Void> deleteComment(@PathVariable Long commentId){
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@DeleteMapping("/{sighting_id}/comments/{id}")
+	 public ResponseEntity<Void> deleteComment(@RequestHeader (name="Authorization") String token, @PathVariable Long commentId){
+		
+		String username = tokenUtils.getUsernameFromToken(token);
+		
+		Comment comment = sightingService.findOneCommentById(commentId);
+		
+		if(!username.equals(comment.getUser().getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+		
 	     boolean deleted = sightingService.deleteComment(commentId);
 
 	     if(deleted == true) {

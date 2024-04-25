@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -75,6 +76,7 @@ public class UserController {
 	@Autowired
 	private SightingToSightingDTO toSightingDTO;
 	
+	@PreAuthorize("permitAll()")
 	@GetMapping
     public ResponseEntity<List<UserDTO>> get(@RequestParam(defaultValue="0") int page){
         Page<User> users = userService.findAll(page);
@@ -82,6 +84,7 @@ public class UserController {
      
     }
 	
+	@PreAuthorize("permitAll()")
 	@GetMapping("/{id}")
     public ResponseEntity<UserDTO> get(@PathVariable Long id){
         User user = userService.findOneById(id);
@@ -94,6 +97,7 @@ public class UserController {
         }
     }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/me")
     public Optional<User> getUserProfile(@RequestHeader (name="Authorization") String token) {
 		
@@ -103,10 +107,14 @@ public class UserController {
 
     }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PutMapping(value= "/me",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> update(@RequestHeader (name="Authorization") String token, @Valid @RequestBody UserDTO userDTO){
 		
 		String username = tokenUtils.getUsernameFromToken(token);
+		
+		System.out.println("USERNAME");
+		System.out.println(username);
 		
 		if(!username.equals(userDTO.getUsername())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -124,8 +132,9 @@ public class UserController {
         
     }
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/{id}/sightings")
-	public ResponseEntity<List<SightingDTO>> getAllSightingsByUser(@PathVariable Long id){
+	public ResponseEntity<List<SightingDTO>> getAllSightingsByUser(@RequestHeader (name="Authorization") String token, @PathVariable Long id){
 		
 		 List<Sighting> sightings = sightingService.findAllSightingsByUserId(id);
 		 
@@ -135,8 +144,9 @@ public class UserController {
 		
 	}
 	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PostMapping("/register")
-    public ResponseEntity<UserDTO> create(@RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
+    public ResponseEntity<UserDTO> create(@RequestHeader (name="Authorization") String token, @RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
 
         if(userRegistrationDTO.getId() != null || !userRegistrationDTO.getPassword().equals(userRegistrationDTO.getRepeatedPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -151,7 +161,7 @@ public class UserController {
         
     }
 	
-//    @PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
 	@PostMapping(path = "/login")
     public ResponseEntity authenticateUser(@RequestBody AuthUserDTO authUserDTO) {
 		System.out.println("DTO");
@@ -175,9 +185,16 @@ public class UserController {
         
     }
 	
+    @PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(value= "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> update(@RequestHeader (name="Authorization") String token, @PathVariable Long id, @Valid @RequestBody UserDTO userDTO){
 
+    	String username = tokenUtils.getUsernameFromToken(token);
+		
+		if(!username.equals(userDTO.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    	
         if(!id.equals(userDTO.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -187,9 +204,22 @@ public class UserController {
         return new ResponseEntity<>(toUserDTO.convert(userService.save(user)),HttpStatus.OK);
     }
 	
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PutMapping(value="/{id}", params = "passwordChange")
-    public ResponseEntity<Void> changePassword(@PathVariable Long id, @RequestBody UserPasswordChangeDTO userPasswordChangeDTO){
+    public ResponseEntity<Void> changePassword(@RequestHeader (name="Authorization") String token, @PathVariable Long id, @RequestBody UserPasswordChangeDTO userPasswordChangeDTO){
        
+    	String username = tokenUtils.getUsernameFromToken(token);
+		
+		if(!username.equals(userPasswordChangeDTO.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+		
+//		Long userId = tokenUtils.getUserIdFromJwt(token, username);
+//
+//		if(id != userId) {
+//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//		}
+    	
         if(!userPasswordChangeDTO.getPassword().equals(userPasswordChangeDTO.getRepeatedPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

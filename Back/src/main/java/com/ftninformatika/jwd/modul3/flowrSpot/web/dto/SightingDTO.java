@@ -4,8 +4,6 @@ public class SightingDTO {
 	
 	private Long id;
 	
-	private FlowerDTO flowerDTO;
-	
 	private String name;
 	
 	private String description;
@@ -13,13 +11,17 @@ public class SightingDTO {
 	private Double latitude;
 	
 	private Double longitude;
+	
+	private UserDTO userDTO;
+
+	private FlowerDTO flowerDTO;
 
 	public SightingDTO() {
 		super();
 	}
 
 	public SightingDTO(Long id, FlowerDTO flowerDTO, String name, String description, Double latitude,
-			Double longitude) {
+			Double longitude, UserDTO userDTO) {
 		super();
 		this.id = id;
 		this.flowerDTO = flowerDTO;
@@ -27,6 +29,7 @@ public class SightingDTO {
 		this.description = description;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.userDTO = userDTO;
 	}
 
 	public Long getId() {
@@ -75,6 +78,20 @@ public class SightingDTO {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+	public UserDTO getUserDTO() {
+		return userDTO;
+	}
+
+	public void setUserDTO(UserDTO userDTO) {
+		this.userDTO = userDTO;
+	}
+
+	@Override
+	public String toString() {
+		return "SightingDTO [id=" + id + ", name=" + name + ", description=" + description + ", latitude=" + latitude
+				+ ", longitude=" + longitude + ", userDTO=" + userDTO + ", flowerDTO=" + flowerDTO + "]";
 	}
 	
 }
