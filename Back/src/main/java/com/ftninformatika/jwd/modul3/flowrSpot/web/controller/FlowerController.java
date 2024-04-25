@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +24,7 @@ import com.ftninformatika.jwd.modul3.flowrSpot.model.Sighting;
 import com.ftninformatika.jwd.modul3.flowrSpot.security.TokenUtils;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.FlowerService;
 import com.ftninformatika.jwd.modul3.flowrSpot.service.SightingService;
+import com.ftninformatika.jwd.modul3.flowrSpot.service.UserService;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.FlowerDTOToFlower;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.FlowerToFlowerDTO;
 import com.ftninformatika.jwd.modul3.flowrSpot.support.SightingToSightingDTO;
@@ -40,6 +42,9 @@ public class FlowerController {
 	private SightingService sightingService;
 	
 	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private FlowerToFlowerDTO toFlowerDTO;
 	
 	@Autowired
@@ -47,6 +52,9 @@ public class FlowerController {
 	
 	@Autowired
 	private SightingToSightingDTO toSightingDTO;
+	
+	@Autowired
+	private TokenUtils tokenUtils;
 	
 	@PreAuthorize("permitAll()")
 	@GetMapping
@@ -58,6 +66,7 @@ public class FlowerController {
         return new ResponseEntity<>(flowersDTO, HttpStatus.OK);
     }
 	
+	@PreAuthorize("permitAll()")
 	@GetMapping("/{id}")
 	public ResponseEntity<FlowerDTO> get(@PathVariable Long id){
 		
@@ -72,9 +81,10 @@ public class FlowerController {
 	    return new ResponseEntity<>(flowerDTO, HttpStatus.OK);
     }
 	
-    @PreAuthorize("permitAll()")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FlowerDTO> create(@Valid @RequestBody FlowerDTO flowerDTO){
+    public ResponseEntity<FlowerDTO> create(@RequestHeader (name="Authorization") String token, @Valid @RequestBody FlowerDTO flowerDTO){
+		
 		Flower flower = toFlower.convert(flowerDTO);
 		Flower savedFlower= flowerService.save(flower);
         
@@ -83,6 +93,7 @@ public class FlowerController {
         return new ResponseEntity<>(savedFlowerDTO, HttpStatus.CREATED);
     }
     
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping(value = "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FlowerDTO> update(@PathVariable Long id, @Valid @RequestBody FlowerDTO flowerDTO){
 
@@ -103,6 +114,7 @@ public class FlowerController {
         return new ResponseEntity<>(flowerUpdated, HttpStatus.OK);
     }
     
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/{id}")
 	 public ResponseEntity<Void> deleteLike(@PathVariable Long id){
 	     boolean deleted = flowerService.delete(id);
@@ -114,6 +126,7 @@ public class FlowerController {
 	    }
 	}
     
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{id}/sightings")
     public ResponseEntity<List<SightingDTO>> getAllByFlower(@PathVariable Long id){
     	
@@ -123,6 +136,7 @@ public class FlowerController {
         return new ResponseEntity<>(sightingsDTO, HttpStatus.OK);
     }
     
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/favorites")
     public ResponseEntity<List<FlowerDTO>> findAllFavoriteFlowersByUserId(@PathVariable String token, String secretKey){
     	

@@ -54,4 +54,10 @@ public class UserDTO {
 		this.username = username;
 	}
 
+	@Override
+	public String toString() {
+		return "UserDTO [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", username=" + username
+				+ "]";
+	}
+
 }

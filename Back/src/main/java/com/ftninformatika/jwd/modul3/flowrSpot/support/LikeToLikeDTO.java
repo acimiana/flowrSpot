@@ -32,6 +32,8 @@ public class LikeToLikeDTO implements Converter<Like, LikeDTO> {
 		User user = like.getUser();
 		UserDTO userDTO = toUserDTO.convert(user);
 		
+		likeDTO.setUserDTO(userDTO);
+		
 		Sighting sighting = like.getSighting();
 		SightingDTO sightingDTO = toSightingDTO.convert(sighting);
 		

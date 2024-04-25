@@ -5,15 +5,18 @@ public class LikeDTO {
 	private Long id;
 		
 	private SightingDTO sightingDTO;
+	
+	private UserDTO userDTO;
 
 	public LikeDTO() {
 		super();
 	}
 
-	public LikeDTO(Long id, SightingDTO sightingDTO) {
+	public LikeDTO(Long id, SightingDTO sightingDTO, UserDTO userDTO) {
 		super();
 		this.id = id;
 		this.sightingDTO = sightingDTO;
+		this.userDTO = userDTO;
 	}
 
 	public Long getId() {
@@ -30,6 +33,14 @@ public class LikeDTO {
 
 	public void setSightingDTO(SightingDTO sightingDTO) {
 		this.sightingDTO = sightingDTO;
+	}
+
+	public UserDTO getUserDTO() {
+		return userDTO;
+	}
+
+	public void setUserDTO(UserDTO userDTO) {
+		this.userDTO = userDTO;
 	}
 
 }

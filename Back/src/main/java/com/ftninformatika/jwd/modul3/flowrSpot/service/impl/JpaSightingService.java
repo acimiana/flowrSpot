@@ -47,7 +47,7 @@ public class JpaSightingService implements SightingService {
 
 	@Override
 	public Sighting save(Sighting sighting) {
-//		currentFlower = flowerRepository.findOneById(sighting.getFlower().getId());
+//		Flower currentFlower = flowerRepository.findOneById(sighting.getFlower().getId());
 		Flower currentFlower = sighting.getFlower();
 		currentFlower.setSightingsNo(currentFlower.getSightingsNo() + 1);
 		flowerRepository.save(currentFlower);
