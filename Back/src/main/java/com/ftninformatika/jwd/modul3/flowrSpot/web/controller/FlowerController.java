@@ -81,7 +81,7 @@ public class FlowerController {
 	    return new ResponseEntity<>(flowerDTO, HttpStatus.OK);
     }
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FlowerDTO> create(@RequestHeader (name="Authorization") String token, @Valid @RequestBody FlowerDTO flowerDTO){
 		
@@ -93,7 +93,7 @@ public class FlowerController {
         return new ResponseEntity<>(savedFlowerDTO, HttpStatus.CREATED);
     }
     
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping(value = "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FlowerDTO> update(@PathVariable Long id, @Valid @RequestBody FlowerDTO flowerDTO){
 
@@ -114,7 +114,7 @@ public class FlowerController {
         return new ResponseEntity<>(flowerUpdated, HttpStatus.OK);
     }
     
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/{id}")
 	 public ResponseEntity<Void> deleteLike(@PathVariable Long id){
 	     boolean deleted = flowerService.delete(id);
@@ -126,7 +126,7 @@ public class FlowerController {
 	    }
 	}
     
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{id}/sightings")
     public ResponseEntity<List<SightingDTO>> getAllByFlower(@PathVariable Long id){
     	
@@ -136,7 +136,7 @@ public class FlowerController {
         return new ResponseEntity<>(sightingsDTO, HttpStatus.OK);
     }
     
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/favorites")
     public ResponseEntity<List<FlowerDTO>> findAllFavoriteFlowersByUserId(@PathVariable String token, String secretKey){
     	

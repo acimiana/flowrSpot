@@ -9,6 +9,7 @@ const UserTable = (props) => {
     const [sightings, setSightings] = useState([]);
     const [sighting, setSighting] = useState([]);
     const [flowers, setFlowers] = useState([]);
+    const [users, setUsers] = useState([]);
 
     var navigate = useNavigate()
 
@@ -93,7 +94,7 @@ const UserTable = (props) => {
 
 
     const renderUserRows = () => {
-        return getUser.map((user, index) => {
+        return users.map((user, index) => {
             return (
                 <tr key={index}>
                     <td>{user.firstName + user.lastName}</td>
@@ -110,7 +111,7 @@ const UserTable = (props) => {
     }
 
     const renderSightingsRows = () => {
-        return sightings.map((sightings, index) => {
+        return sightings.map((sighting, index) => {
             return (
                 <tr key={index}>
 

@@ -7,16 +7,16 @@ const TableRow = (props) => {
 
     var navigate = useNavigate()
 
-    const getGenresStringFromList = (list) => {
-        return list.map(element => element.naziv).join(',');
-    }
+    // const getGenresStringFromList = (list) => {
+    //     return list.map(element => element.naziv).join(',');
+    // }
 
     // const goToEdit = (ZadatakId) => {
     //     navigate('/zadaci/edit/' + movieId); 
     // }
 
-    const deletePacijent = (pacijentId) => {
-        AppAxios.delete('/pacijenti/' + pacijentId)
+    const deleteSighting = (sightingId) => {
+        AppAxios.delete('/sightings/' + sightingId)
         .then(res => {
             // handle success
             console.log(res);
@@ -32,18 +32,16 @@ const TableRow = (props) => {
 
     return (
         <tr>
-           <td>{props.pacijent.ime}</td>
-           <td>{props.pacijent.prezime}</td>
-           <td>{props.pacijent.datumRodjenja}</td>
-           <td>{props.pacijent.mestoRodjenja}</td>
-           <td>{props.pacijent.Lbo}</td>
-           <td>{props.pacijent.doktor.ime}</td>
-           <td>{props.pacijent.doktor.prezime}</td>
-
+           <td>{props.sighting.name}</td>
+           <td>{props.sighting.description}</td>
+           <td>{props.sighting.latitude}</td>
+           <td>{props.sighting.longitude}</td>
+           <td>{props.sighting.user.firstName}</td>
+           <td>{props.sighting.user.lastName}</td>
 
            {/* <td>{getGenresStringFromList(props.movie.zanrovi)}</td> */}
            {/* <td><Button className="button button-navy" onClick={() => goToEdit(props.movie.id)}>Edit</Button></td> */}
-           <td><Button className="button button-navy" onClick={() => deletePacijent(props.pacijent.id)}>Delete</Button></td>
+           <td><Button className="button button-navy" onClick={() => deleteSighting(props.user.id)}>Delete</Button></td>
         </tr>
      )
 }

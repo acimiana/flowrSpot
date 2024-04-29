@@ -43,4 +43,9 @@ public class LikeDTO {
 		this.userDTO = userDTO;
 	}
 
+	@Override
+	public String toString() {
+		return "LikeDTO [id=" + id + ", sightingDTO=" + sightingDTO + ", userDTO=" + userDTO + "]";
+	}
+
 }

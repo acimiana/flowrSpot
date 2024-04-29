@@ -27,8 +27,6 @@ public class UserPasswordChangeDTO {
 		this.repeatedPassword = repeatedPassword;
 	}
 
-
-
 	public String getUsername() {
 		return username;
 	}

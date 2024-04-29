@@ -20,7 +20,7 @@ const App = () => {
               <Router>
                   <Navbar expand bg="dark" variant="dark">
                       <Navbar.Brand as={Link} to="/">
-                          JWD
+                          Positive tech
                       </Navbar.Brand>
                       <Nav>
                       <Button onClick={logout}>Logout</Button>

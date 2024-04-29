@@ -3,33 +3,35 @@ import AppAxios from '../../apis/AppAxios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Row, Col, Form, Button } from "react-bootstrap"
 
-const EditForm = () => {
+const EditSightingForm = () => {
 
     const urlParams = useParams();
     // console.log('urlParams', urlParams);
 
-    const zadatakId = urlParams.id;
+    const sightingId = urlParams.id;
 
     var navigate = useNavigate()
 
-    var movie={
-        movieId: -1,
-        movieName: "",
-        movieDuration: 0,
-        movieGenres: []
+    var sighting={
+        sightingId: -1,
+        sightingName: "",
+        sightingDescription: 0,
+        sightingLatitude,
+        sightingLongitude
     }
 
-    const [updateMovie, setUpdateMovie] = useState(movie);
+    const [sighting, setSighting] = useState(sighting);
+    const [updatedSighting, setUpdateSighting] = useState(updatedSighting);
 
-    const [zadatak, setZadatak] = useState(null); // OVAJ STATE SETUJE AXIOS KAD DOBAVI SA BE INICIJALNO ZADATAK
+    // const [zadatak, setZadatak] = useState(null); // OVAJ STATE SETUJE AXIOS KAD DOBAVI SA BE INICIJALNO ZADATAK
 
-    const [stanja, setStanja] = useState([]);
-    const [sprintovi, setSprintovi] = useState([]);
+    const [flowers, setFlowers] = useState([]);
+    const [users, setUsers] = useState([]);
 
-    const getZadatakById = useCallback(async (zadatakId) => {
-        const response = await AppAxios.get('/zadaci/' + zadatakId);
+    const getSightingById = useCallback(async (sightingId) => {
+        const response = await AppAxios.get('/sightings/' + sightingId);
         console.log('Dobavio zadatak: ', response.data);
-        setZadatak(response.data);
+        setSighting(response.data);
 
         // .then(res => {
         //     // handle success
@@ -44,7 +46,7 @@ const EditForm = () => {
     }, []);
 
    useEffect(() => {
-     getZadatakById(zadatakId)
+    getSightingById(sightingId)
    }, []);
 
     const edit = async () => {
@@ -56,9 +58,9 @@ const EditForm = () => {
 
         try {
             console.log('BODY KOJI ZELIM', zadatak); // zadatak je vec dobro namapiran, i ne treba nam params/body mapiranje, vec je u DTO obliku
-            const response = await AppAxios.put('/zadaci/' + zadatak.id, zadatak)
+            const response = await AppAxios.put('/sightings/' + sighting.id, sighting)
             alert('Update je uspesan');
-            navigate('/zadaci');
+            navigate('/sightings');
         } catch (e) {
             console.log('error se desio', e.response.data);
             alert('Neuspesan edit', e);
@@ -78,141 +80,165 @@ const EditForm = () => {
         //  });
     }
 
-    const getStanja = useCallback(async () => {
-        const response = await AppAxios.get('/stanja');
-        setStanja(response.data);
+    const getFlowers = useCallback(async () => {
+        const response = await AppAxios.get('/flowers');
+        setFlowers(response.data);
     }, []);
 
-    const getSprintovi = useCallback(async () => {
-        const response = await AppAxios.get('/sprintovi');
-        setSprintovi(response.data);
+    const getUsers = useCallback(async () => {
+        const response = await AppAxios.get('/users');
+        setUsers(response.data);
     }, []);
 
     useEffect(() => {
-        getStanja();
-        getSprintovi();
+        getFlowers();
+        setUsers();
     }, []);
 
-    const renderStanja = () => {
-        return stanja.map((stanje)=> <option key={stanje.id} value={stanje.id}> {stanje.ime}</option>)
+    const renderFlowers = () => {
+        return flowers.map((flower)=> <option key={flower.id} value={flower.id}> {flower.ime}</option>)
     }
 
     const renderSprint = () => {
-        return sprintovi.map((sprint)=> <option key={sprint.id} value={sprint.id}> {sprint.ime}</option>)
+        return users.map((user)=> <option key={user.id} value={user.id}> {user.ime}</option>)
     }
 
     const onNameChange = (event) => {
         console.log("Nova vrednost imena", event.target.value);
         const value = event.target.value;
-        const zadatakPromenjen = {
-            id: zadatak.id,
-            ime: value,
-            zaduzeni: zadatak.zaduzeni,
-            bodovi: zadatak.bodovi,
-            stanjeDTO: zadatak.stanjeDTO,
-            sprintDTO: zadatak.sprintDTO
+        const updatedSighting = {
+            id: sighting.id,
+            name: value,
+            description: sighting.description,
+            latitude: sighting.latitude,
+            longitude: sighting.longitude,
+            flowerDTO: sighting.flowerDTO,
+            userDTO: sighting.userDTO
         }
-        setZadatak(zadatakPromenjen);
+        setSighting(updatedSighting);
     }
 
-    const onZaduzeniChange = (event) => {
-        console.log("Nova vrednost zaduzenog", event.target.value);
+    const onDescriptionChange = (event) => {
+        console.log("Nova vrednost imena", event.target.value);
         const value = event.target.value;
-        const zadatakPromenjen = {
-            id: zadatak.id,
-            ime: zadatak.ime,
-            zaduzeni: value,
-            bodovi: zadatak.bodovi,
-            stanjeDTO: zadatak.stanjeDTO,
-            sprintDTO: zadatak.sprintDTO
+        const updatedSighting = {
+            id: sighting.id,
+            name: sighting.name,
+            description: value,
+            latitude: sighting.latitude,
+            longitude: sighting.longitude,
+            flowerDTO: sighting.flowerDTO,
+            userDTO: sighting.userDTO
         }
-        setZadatak(zadatakPromenjen);
+            setSighting(updatedSighting);    
+    }    
+
+    const onLatitudeChange = (event) => {
+        console.log("Nova vrednost imena", event.target.value);
+        const value = event.target.value;
+        const updatedSighting = {
+            id: sighting.id,
+            name: sighting.name,
+            description: sighting.description,
+            latitude: value,
+            longitude: sighting.longitude,
+            flowerDTO: sighting.flowerDTO,
+            userDTO: sighting.userDTO
+        }
+                setSighting(updatedSighting);
+    }
+    const onLongitudeChange = (event) => {
+    console.log("Nova vrednost imena", event.target.value);
+    const value = event.target.value;
+    const updatedSighting = {
+        id: sighting.id,
+         name: sighting.name,
+        description: sighting.description,
+        latitude: sighting.latitude,
+        longitude: value,
+        flowerDTO: sighting.flowerDTO,
+        userDTO: sighting.userDTO
+    }
+                setSighting(updatedSighting);
+    }
+    
+    const onFlowerChange = (event) => {
+    console.log("Nova vrednost imena", event.target.value);
+    const value = event.target.value;
+    const updatedSighting = {
+        id: sighting.id,
+        name: sighting.name,
+        description: sighting.description,
+        latitude: sighting.latitude,
+        longitude: sighting.longitude,
+        flowerDTO: {
+            id: value  
+        },
+        userDTO: sighting.userDTO
+    }
+            setSighting(updatedSighting);
     }
 
-    const onBodoviChange = (event) => {
-        console.log("Nova vrednost bodova", event.target.value);
-        const value = event.target.value;
-        const zadatakPromenjen = {
-            id: zadatak.id,
-            ime: zadatak.ime,
-            zaduzeni: zadatak.zaduzeni,
-            bodovi: value,
-            stanjeDTO: zadatak.stanjeDTO,
-            sprintDTO: zadatak.sprintDTO
-        }
-        setZadatak(zadatakPromenjen);
-    }
-
-    const onStanjeChange = (event) => {
-        console.log("Nova vrednost stanja", event.target.value);
-        const value = event.target.value;
-        const zadatakPromenjen = {
-            id: zadatak.id,
-            ime: zadatak.ime,
-            zaduzeni: zadatak.zaduzeni,
-            bodovi: zadatak.bodovi,
-            stanjeDTO: {
+    const onUserChange = (event) => {
+    console.log("Nova vrednost imena", event.target.value);
+    const value = event.target.value;
+    const updatedSighting = {
+        id: sighting.id,
+        name: sighting.name,
+        description: sighting.description,
+        latitude: sighting.latitude,
+        longitude: sighting.longitude,
+        flowerDTO: sighting.flowerDTO,
+        userDTO: {
                 id: value  
-            },
-            sprintDTO: zadatak.sprintDTO
+            }
         }
-        setZadatak(zadatakPromenjen);
-    }
-
-    const onSprintChange = (event) => {
-        console.log("Nova vrednost sprinta", event.target.value);
-        const value = event.target.value;
-        const zadatakPromenjen = {
-            id: zadatak.id,
-            ime: zadatak.ime,
-            zaduzeni: zadatak.zaduzeni,
-            bodovi: zadatak.bodovi,
-            sprintDTO: {
-                id: value  
-            },
-            stanjeDTO: zadatak.stanjeDTO
+                setSighting(updatedSighting);
         }
-        setZadatak(zadatakPromenjen);
-    }
 
     return (
 
         <div>
 
-            <h1>Izmeni Zadatak</h1>
+            <h1>Change sighting</h1>
 
-            { zadatak !== null && (
+            { sighting !== null && (
                 <Row className="justify-content-center">
                     <Col md={6}>
                     <Form>
                         <Form.Group>
-                            <Form.Label>Ime</Form.Label>
-                            <Form.Control type="text" value={zadatak.ime} onChange={(e)=> onNameChange(e)}></Form.Control>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control type="text" value={sighting.ime} onChange={(e)=> onNameChange(e)}></Form.Control>
                         </Form.Group>
 
                         <Form.Group>
-                            <Form.Label>Zaduzeni</Form.Label>
-                            <Form.Control type="text" value={zadatak.zaduzeni} onChange={(e)=> onZaduzeniChange(e)}></Form.Control>
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control type="text" value={sighting.description} onChange={(e)=> onDescriptionChange(e)}></Form.Control>
                         </Form.Group>
 
                         <Form.Group>
-                            <Form.Label>Bodovi</Form.Label>
-                            <Form.Control type="number" value={zadatak.bodovi} onChange={(e)=> onBodoviChange(e)}></Form.Control>
+                            <Form.Label>Latitude</Form.Label>
+                            <Form.Control type="number" value={sighting.latitude} onChange={(e)=> onLatitudeChange(e)}></Form.Control>
                         </Form.Group>
 
                         <Form.Group>
-                            <Form.Label>Stanje</Form.Label>
-                            <Form.Control as="select" name="stanje" value={zadatak.stanjeDTO.id} onChange={(e) => onStanjeChange(e)}>
-                                <option>Izaberi stanje</option>
-                                {renderStanja()}
+                            <Form.Label>Longitude</Form.Label>
+                            <Form.Control type="number" value={sighting.longitude} onChange={(e)=> onLongitudeChange(e)}></Form.Control>
+                        </Form.Group>
+
+                        <Form.Group>
+                            <Form.Label>Flower</Form.Label>
+                            <Form.Control as="select" name="flower" value={sighting.flowerDTO.id} onChange={(e) => onStanjeChange(e)}>
+                                <option>Choose a flower</option>
+                                {renderFlowers()}
                             </Form.Control><br />
                         </Form.Group>
 
                         <Form.Group>
-                            <Form.Label>Sprint</Form.Label>
-                            <Form.Control as="select" name="sprint" value={zadatak.sprintDTO.id} onChange={(e) => onSprintChange(e)}>
-                                <option>Izaberi sprint</option>
-                                {renderSprint()}
+                            <Form.Label>User</Form.Label>
+                            <Form.Control as="select" name="user" value={sighting.userDTO.id} onChange={(e) => onSprintChange(e)}>
+                                <option>Choose a user</option>
+                                {renderUsers()}
                             </Form.Control><br />
                         </Form.Group>
 
@@ -227,7 +253,7 @@ const EditForm = () => {
             
         }
 
-        { zadatak === null && (
+        { sighting === null && (
                 <h1>DATA LOADING</h1>
             )
         }
@@ -238,4 +264,4 @@ const EditForm = () => {
     );
 }
 
-export default EditForm;
+export default EditSightingForm;
