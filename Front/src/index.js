@@ -12,8 +12,6 @@ import UserTable from './components/entity/UserTable';
 
 const App = () => {
 
-    // U zavisnosti od toga da li postoji jwt u local storage-u (da li je korisnik ulogovan)
-    // vracamo nazad drugaciju Home stranicu koja prikazuje drugacije stvari u nav bar-u
     if(window.localStorage["jwt"]){
       return (
           <>
@@ -42,7 +40,7 @@ const App = () => {
             <Router>
                 <Navbar expand bg="dark" variant="dark">
                     <Navbar.Brand as={Link} to="/">
-                        JWD
+                    Positive tech
                     </Navbar.Brand>
                     <Nav>
                     <Nav.Link as={Link} to="/login">

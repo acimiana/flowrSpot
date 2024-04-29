@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AppAxios from '../../apis/AppAxios';
 import { Row, Col, Form, Button } from "react-bootstrap"
 
-const AddSightingForm = () => {
+const AddSighting = () => {
     const sighting = {
 
         "name": "",
@@ -24,14 +24,12 @@ const AddSightingForm = () => {
 
     const getFlowers = useCallback(async (id) => {
         const response = await AppAxios.get('/flowers/id');
-        console.log('RESPONSE stanja OD AXIOSA', response.data);
-        setFlower(response.data);
+        setFlowers(response.data);
     }, []);
 
     const getUsers = useCallback(async (id) => {
         const response = await AppAxios.get('/users/id');
-        console.log('RESPONSE sprintova OD AXIOSA', response.data);
-        setUser(response.data);
+        setUsers(response.data);
     }, []);
 
 
@@ -54,34 +52,15 @@ const AddSightingForm = () => {
             }
         };
 
-        console.log("OVO JE BODY", body);
-
         try {
             const response = await AppAxios.post('/sightings', body);
-            console.log('response za create', response);
-            alert('Zadatak uspesno kreiran');
             navigate('/sightings');
         } catch (e) {
-            console.log('DESIO SE ERROR', e);
             alert(e);
         }
-
-        // .then(res => {
-        //     // handle success
-        //     console.log(res);
-           
-        //     alert('Movie was added successfully!');
-        //     navigate('/movies'); 
-        // })
-        // .catch(error => {
-        //     // handle error
-        //     console.log(error);
-        //     alert('Error occured please try again!');
-        //  });
     }
 
     const onNameChange = (event) => {
-        console.log("Nova vrednost imena", event.target.value);
         const value = event.target.value;
         const changedSighting = {
             name: value,
@@ -95,7 +74,6 @@ const AddSightingForm = () => {
     }
 
     const onDescriptionChange = (event) => {
-        console.log("Nova vrednost zaduzenog", event.target.value);
         const value = event.target.value;
         const changedSighting = {
             name: newSighting.name,
@@ -109,7 +87,6 @@ const AddSightingForm = () => {
     }
 
     const onLatitudeChange = (event) => {
-        console.log("Nova vrednost bodova", event.target.value);
         const value = event.target.value;
         const changedSighting = {
             name: newSighting.name,
@@ -123,7 +100,6 @@ const AddSightingForm = () => {
     }
 
     const onLongitudeChange = (event) => {
-        console.log("Nova vrednost stanja", event.target.value);
         const value = event.target.value;
         const changedSighting = {
             name: newSighting.name,
@@ -137,7 +113,6 @@ const AddSightingForm = () => {
     }
 
     const onFlowerChange = (event) => {
-        console.log("Nova vrednost sprinta", event.target.value);
         const value = event.target.value;
         const changedSighting = {
             name: newSighting.name,
@@ -151,7 +126,6 @@ const AddSightingForm = () => {
     }
 
     const onUserChange = (event) => {
-        console.log("Nova vrednost stanja", event.target.value);
         const value = event.target.value;
         const changedSighting = {
             name: newSighting.name,
@@ -175,16 +149,6 @@ const AddSightingForm = () => {
     return (
         <div>
             <h1>Add sighting</h1>
-            {/* <label htmlFor="ime">Ime</label>
-            <input id="ime" type="text" onChange={(e) => onNameChange(e)}/><br/>
-
-            <label htmlFor="zaduzeni">Zaduzeni</label>
-            <input id="zaduzeni" type="text" onChange={(e) => onDurationChange(e)}/>
-
-            <label htmlFor="bodovi">Bodovi</label>
-            <input id="bodovi" type="number" onChange={(e) => onDurationChange(e)}/>
-            
-            <button className="button button-navy" onClick={create}>Add</button> */}
 
             <Row className="justify-content-center">
                 <Col md={6}>
@@ -233,9 +197,8 @@ const AddSightingForm = () => {
                 </Col>
             </Row>
 
-
         </div>
     );
 }
 
-export default AddSightingForm;
+export default AddSighting;

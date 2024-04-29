@@ -1,26 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Col, Form, Row, Table } from 'react-bootstrap';
+import { Button, Col, Row, Table } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import AppAxios from '../../apis/AppAxios';
 import TableRow from './TableRow';
 
 const SightingsTable = (props) => {
 
-    const [sightings, setSightings] = useState([]) // state za filmove koje prikazujemo u tabeli
-    const [flowers, setFlowers] = useState([]) // state za zanrove koje prikazujemo u select-u
-    const [user, setUsers] = useState([]) // state za zanrove koje prikazujemo u select-u
+    const [sightings, setSightings] = useState([])
+    const [flowers, setFlowers] = useState([]) 
+    const [users, setUsers] = useState([])
 
     var navigate = useNavigate()
 
     const getSightings = useCallback(() => {
         AppAxios.get('/sightings')
             .then(res => {
-                 // handle success
                  console.log(res);
                  setSightings(res.data)
             })
             .catch(error => {
-                // handle error
                 console.log(error);
                 alert('Error occured please try again!');
             });
@@ -32,7 +30,6 @@ const SightingsTable = (props) => {
             setFlowers(res.data);
         })
         .catch(error => {
-            // handle error
             console.log(error);
             alert('Error occured please try again!');
         });
@@ -44,17 +41,12 @@ const SightingsTable = (props) => {
             setUsers(res.data);
         })
         .catch(error => {
-            // handle error
             console.log(error);
             alert('Error occured please try again!');
         });
     }
 
     useEffect(() => {
-        // Prilikom ucitavanja stranice 
-        // Potrebno je dobaviti SVE filmove
-        // i zanrove koje cemo prikazati
-        // u okviru select-a
         getSightings();
         getFlowers();
         getUsers();

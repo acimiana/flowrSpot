@@ -3,27 +3,25 @@ import AppAxios from '../../apis/AppAxios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Row, Col, Form, Button } from "react-bootstrap"
 
-const EditSightingForm = () => {
+const EditSighting = () => {
 
     const urlParams = useParams();
-    // console.log('urlParams', urlParams);
 
     const sightingId = urlParams.id;
 
     var navigate = useNavigate()
 
     var sighting={
+
         sightingId: -1,
         sightingName: "",
         sightingDescription: 0,
         sightingLatitude,
         sightingLongitude
+        
     }
 
     const [sighting, setSighting] = useState(sighting);
-    const [updatedSighting, setUpdateSighting] = useState(updatedSighting);
-
-    // const [zadatak, setZadatak] = useState(null); // OVAJ STATE SETUJE AXIOS KAD DOBAVI SA BE INICIJALNO ZADATAK
 
     const [flowers, setFlowers] = useState([]);
     const [users, setUsers] = useState([]);
@@ -32,17 +30,6 @@ const EditSightingForm = () => {
         const response = await AppAxios.get('/sightings/' + sightingId);
         console.log('Dobavio zadatak: ', response.data);
         setSighting(response.data);
-
-        // .then(res => {
-        //     // handle success
-        //     console.log(res);
-        //     setUpdateMovie({ movieId: res.data.id, movieName: res.data.naziv, movieDuration: res.data.trajanje});
-        // })
-        // .catch(error => {
-        //     // handle error
-        //     console.log(error);
-        //     alert('Error occured please try again!');
-        //  });
     }, []);
 
    useEffect(() => {
@@ -50,34 +37,14 @@ const EditSightingForm = () => {
    }, []);
 
     const edit = async () => {
-        // var params = {
-        //     'id': updateMovie.movieId,
-        //     'naziv': updateMovie.movieName,
-        //     'trajanje': updateMovie.movieDuration
-        // };
 
         try {
-            console.log('BODY KOJI ZELIM', zadatak); // zadatak je vec dobro namapiran, i ne treba nam params/body mapiranje, vec je u DTO obliku
             const response = await AppAxios.put('/sightings/' + sighting.id, sighting)
-            alert('Update je uspesan');
+            alert('Edit succesful!');
             navigate('/sightings');
         } catch (e) {
-            console.log('error se desio', e.response.data);
-            alert('Neuspesan edit', e);
+            alert('Edit unuccesful!', e);
         }
-
-
-        // .then(res => {
-        //     // handle success
-        //     console.log(res);
-        //     alert('Movie was edited successfully!');
-        //     navigate('/movies');
-        // })
-        // .catch(error => {
-        //     // handle error
-        //     console.log(error);
-        //     alert('Error occured please try again!');
-        //  });
     }
 
     const getFlowers = useCallback(async () => {
@@ -92,19 +59,18 @@ const EditSightingForm = () => {
 
     useEffect(() => {
         getFlowers();
-        setUsers();
+        getUsers();
     }, []);
 
     const renderFlowers = () => {
         return flowers.map((flower)=> <option key={flower.id} value={flower.id}> {flower.ime}</option>)
     }
 
-    const renderSprint = () => {
+    const renderUsers = () => {
         return users.map((user)=> <option key={user.id} value={user.id}> {user.ime}</option>)
     }
 
     const onNameChange = (event) => {
-        console.log("Nova vrednost imena", event.target.value);
         const value = event.target.value;
         const updatedSighting = {
             id: sighting.id,
@@ -119,7 +85,6 @@ const EditSightingForm = () => {
     }
 
     const onDescriptionChange = (event) => {
-        console.log("Nova vrednost imena", event.target.value);
         const value = event.target.value;
         const updatedSighting = {
             id: sighting.id,
@@ -134,7 +99,6 @@ const EditSightingForm = () => {
     }    
 
     const onLatitudeChange = (event) => {
-        console.log("Nova vrednost imena", event.target.value);
         const value = event.target.value;
         const updatedSighting = {
             id: sighting.id,
@@ -148,7 +112,6 @@ const EditSightingForm = () => {
                 setSighting(updatedSighting);
     }
     const onLongitudeChange = (event) => {
-    console.log("Nova vrednost imena", event.target.value);
     const value = event.target.value;
     const updatedSighting = {
         id: sighting.id,
@@ -163,7 +126,6 @@ const EditSightingForm = () => {
     }
     
     const onFlowerChange = (event) => {
-    console.log("Nova vrednost imena", event.target.value);
     const value = event.target.value;
     const updatedSighting = {
         id: sighting.id,
@@ -180,7 +142,6 @@ const EditSightingForm = () => {
     }
 
     const onUserChange = (event) => {
-    console.log("Nova vrednost imena", event.target.value);
     const value = event.target.value;
     const updatedSighting = {
         id: sighting.id,
@@ -228,7 +189,7 @@ const EditSightingForm = () => {
 
                         <Form.Group>
                             <Form.Label>Flower</Form.Label>
-                            <Form.Control as="select" name="flower" value={sighting.flowerDTO.id} onChange={(e) => onStanjeChange(e)}>
+                            <Form.Control as="select" name="flower" value={sighting.flowerDTO.id} onChange={(e) => onFlowerChange(e)}>
                                 <option>Choose a flower</option>
                                 {renderFlowers()}
                             </Form.Control><br />
@@ -236,12 +197,11 @@ const EditSightingForm = () => {
 
                         <Form.Group>
                             <Form.Label>User</Form.Label>
-                            <Form.Control as="select" name="user" value={sighting.userDTO.id} onChange={(e) => onSprintChange(e)}>
+                            <Form.Control as="select" name="user" value={sighting.userDTO.id} onChange={(e) => onUserChange(e)}>
                                 <option>Choose a user</option>
                                 {renderUsers()}
                             </Form.Control><br />
                         </Form.Group>
-
 
                     </Form>
 
@@ -256,12 +216,10 @@ const EditSightingForm = () => {
         { sighting === null && (
                 <h1>DATA LOADING</h1>
             )
-        }
-
-            
+        }            
 
     </div>
     );
 }
 
-export default EditSightingForm;
+export default EditSighting;

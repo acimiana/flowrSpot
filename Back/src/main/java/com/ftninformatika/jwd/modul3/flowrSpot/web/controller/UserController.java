@@ -196,7 +196,7 @@ public class UserController {
 //    __________________________________________________________________________
     
 //    @PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(value= "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value= "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> update(@RequestHeader (name="Authorization") String token, @PathVariable Long id, @Valid @RequestBody UserDTO userDTO){
 
 //    	String username = tokenUtils.getUsernameFromToken(token);

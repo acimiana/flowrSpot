@@ -7,7 +7,7 @@ export const login = async (username, password) => {
         password: password
     }
     try{
-        const resp = await AppAxios.post("/korisnici/auth", body)
+        const resp = await AppAxios.post("/users/auth", body)
         window.localStorage.setItem("jwt", resp.data)
         window.location.replace("http://localhost:3000")
     }catch(e){
