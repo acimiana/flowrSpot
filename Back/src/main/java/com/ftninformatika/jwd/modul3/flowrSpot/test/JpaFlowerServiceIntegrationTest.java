@@ -39,6 +39,7 @@ public class JpaFlowerServiceIntegrationTest {
 
 	@Test
 	public void whenValidNameAndLatinName_thenFlowerShouldBeFound() {
+		
 		String name = "Sunflower";
 		String latinName = "Helianthus annuus";
 

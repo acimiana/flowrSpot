@@ -57,4 +57,9 @@ public class Like {
 		this.sighting = sighting;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "Like [id=" + id + ", user=" + user + ", sighting=" + sighting + "]";
+//	}
+
 }

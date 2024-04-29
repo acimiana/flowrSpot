@@ -80,8 +80,7 @@ public class UserController {
 	@GetMapping
     public ResponseEntity<List<UserDTO>> get(@RequestParam(defaultValue="0") int page){
         Page<User> users = userService.findAll(page);
-        return new ResponseEntity<>(toUserDTO.convert(users.getContent()), HttpStatus.OK);
-     
+        return new ResponseEntity<>(toUserDTO.convert(users.getContent()), HttpStatus.OK);  
     }
 	
 	@PreAuthorize("permitAll()")
@@ -97,28 +96,34 @@ public class UserController {
         }
     }
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/me")
-    public Optional<User> getUserProfile(@RequestHeader (name="Authorization") String token) {
+    public ResponseEntity<UserDTO> getUserProfile(@RequestHeader (name="Authorization") String token) {
 		
     	String username = tokenUtils.getUsernameFromToken(token);
     	
-        return userService.findbyUsername(username);
+		Optional<User> u = userService.findbyUsername(username);
+		
+		if(!u.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    	
+        return new ResponseEntity<>(toUserDTO.convert(u.get()), HttpStatus.OK);
 
     }
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PutMapping(value= "/me",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> update(@RequestHeader (name="Authorization") String token, @Valid @RequestBody UserDTO userDTO){
 		
 		String username = tokenUtils.getUsernameFromToken(token);
-		
-		System.out.println("USERNAME");
-		System.out.println(username);
-		
-		if(!username.equals(userDTO.getUsername())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+//		
+//		System.out.println("USERNAME");
+//		System.out.println(username);
+//		
+//		if(!username.equals(userDTO.getUsername())) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
     	
 		Optional<User> userToChange = userService.findbyUsername(username);
 		
@@ -132,7 +137,7 @@ public class UserController {
         
     }
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/{id}/sightings")
 	public ResponseEntity<List<SightingDTO>> getAllSightingsByUser(@RequestHeader (name="Authorization") String token, @PathVariable Long id){
 		
@@ -144,9 +149,9 @@ public class UserController {
 		
 	}
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("permitAll()")
 	@PostMapping("/register")
-    public ResponseEntity<UserDTO> create(@RequestHeader (name="Authorization") String token, @RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
+    public ResponseEntity<UserDTO> create(@RequestBody @Validated UserRegistrationDTO userRegistrationDTO){
 
         if(userRegistrationDTO.getId() != null || !userRegistrationDTO.getPassword().equals(userRegistrationDTO.getRepeatedPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -185,15 +190,20 @@ public class UserController {
         
     }
 	
-    @PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(value= "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+//    __________________________________________________________________________
+//    
+//    							PASSWORD MU JE NULL
+//    __________________________________________________________________________
+    
+//    @PreAuthorize("hasRole('ADMIN')")
+	@PutMapping(value= "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> update(@RequestHeader (name="Authorization") String token, @PathVariable Long id, @Valid @RequestBody UserDTO userDTO){
 
-    	String username = tokenUtils.getUsernameFromToken(token);
-		
-		if(!username.equals(userDTO.getUsername())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+//    	String username = tokenUtils.getUsernameFromToken(token);
+//		
+//		if(!username.equals(userDTO.getUsername())) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
     	
         if(!id.equals(userDTO.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -204,25 +214,30 @@ public class UserController {
         return new ResponseEntity<>(toUserDTO.convert(userService.save(user)),HttpStatus.OK);
     }
 	
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//  __________________________________________________________________________
+//  
+//  							400 BAD REQUEST
+//  __________________________________________________________________________
+//	
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@PutMapping(value="/{id}", params = "passwordChange")
     public ResponseEntity<Void> changePassword(@RequestHeader (name="Authorization") String token, @PathVariable Long id, @RequestBody UserPasswordChangeDTO userPasswordChangeDTO){
        
-    	String username = tokenUtils.getUsernameFromToken(token);
-		
-		if(!username.equals(userPasswordChangeDTO.getUsername())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+//    	String username = tokenUtils.getUsernameFromToken(token);
+//		
+//		if(!username.equals(userPasswordChangeDTO.getUsername())) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
 		
 //		Long userId = tokenUtils.getUserIdFromJwt(token, username);
 //
 //		if(id != userId) {
 //			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 //		}
-    	
-        if(!userPasswordChangeDTO.getPassword().equals(userPasswordChangeDTO.getRepeatedPassword())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+//    	
+//        if(!userPasswordChangeDTO.getPassword().equals(userPasswordChangeDTO.getRepeatedPassword())) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
 
         boolean result;
         try {
@@ -234,8 +249,7 @@ public class UserController {
         if(result) {
             return new ResponseEntity<>(HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);    
         }        
     }	
 }
